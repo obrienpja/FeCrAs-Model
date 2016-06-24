@@ -64,7 +64,7 @@ def sz(sz_val):
 
 # Defines a ferromagnetic mean field parameter to be used in the self-consistent mean-field theory calculation
 def sz_mf(k_point):
-    return conj(m(k_point, 0)) * m(k_point, 0) - m(k_point, 1) * m(k_point, 1)
+    return conj(m(k_point, 0)) * m(k_point, 0) - conj(m(k_point, 1)) * m(k_point, 1)
 
 
 # Constructs a dynamic spin structure term (next version of code.. need faster language?)
