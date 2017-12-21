@@ -46,7 +46,7 @@ def fourier(kx, ky, kz, phase_vector, ang):
 
 # Defines the adjoint of a given matrix
 def adjoint(c_mat):
-    return c_mat + conj(transpose(c_mat))
+    return conj(transpose(c_mat))
 
 
 # Read data from file
@@ -69,8 +69,7 @@ def hamiltonian_cr_cr_1(kx, ky, kz, tz):
     ham[0][1] = fourier(kx, ky, kz, -(primitive_vectors[0] + primitive_vectors[1]), angle4)
     ham[0][2] = fourier(kx, ky, kz, -primitive_vectors[0], angle4)
     ham[1][2] = fourier(kx, ky, kz, primitive_vectors[1], angle4)
-    ham = -tz * ham
-    return ham
+    return tz * ham
 
 
 def hamiltonian_cr_cr_2(kx, ky, kz, tperp, tzp, t2p):
@@ -91,7 +90,6 @@ def hamiltonian_cr_cr_2(kx, ky, kz, tperp, tzp, t2p):
     # fifth row
     ham[4][5] = cos(angle2) * tperp
     # tack a minus sign on so the hopping processes lower energy
-    ham = -ham
     return ham
 
 
@@ -118,7 +116,6 @@ def hamiltonian_cr_cr_3(kx, ky, kz, tperp, tzp, t2p):
     # fifth row
     ham[4][5] = tperp * fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[1], angle2)
     # tack a minus sign on so the hopping processes lower energy
-    ham = -ham
     return ham
 
 
@@ -150,7 +147,6 @@ def hamiltonian_fe_fe_1(kx, ky, kz, tz_fe, tz_fe_p):
     ham[2][1] = tz_fe_p * fourier(kx, ky, kz, -primitive_vectors[0] - primitive_vectors[1] + primitive_vectors[2],
                                   angle6)
     ham[2][2] = tz_fe * fourier(kx, ky, kz, primitive_vectors[2], angle5)
-    ham = -ham
     return ham
 
 
@@ -159,8 +155,7 @@ def hamiltonian_fe_fe_2(kx, ky, kz, tperp_fe):
     ham[0][1] = fourier(kx, ky, kz, -primitive_vectors[0], angle4)
     ham[0][2] = fourier(kx, ky, kz, -primitive_vectors[0], angle4)
     ham[1][2] = fourier(kx, ky, kz, array([0, 0, 0]), angle4)
-    ham = -tperp_fe * ham
-    return ham
+    return tperp_fe * ham
 
 
 def hamiltonian_fe_fe_3(kx, ky, kz, tperp_fe):
@@ -168,8 +163,7 @@ def hamiltonian_fe_fe_3(kx, ky, kz, tperp_fe):
     ham[0][1] = fourier(kx, ky, kz, primitive_vectors[1], angle4)
     ham[0][2] = fourier(kx, ky, kz, array([0, 0, 0]), angle4)
     ham[1][2] = fourier(kx, ky, kz, -primitive_vectors[1], angle4)
-    ham = -tperp_fe * ham
-    return ham
+    return tperp_fe * ham
 
 
 # Construct the Fe-Fe sector
@@ -198,8 +192,7 @@ def hamiltonian_cr_fe_1(kx, ky, kz, t_cr_fe):
     ham[2][0] = fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[2], ang2)
     ham[2][1] = fourier(kx, ky, kz, primitive_vectors[2], ang1)
     ham[2][2] = fourier(kx, ky, kz, primitive_vectors[2], ang3)
-    ham = -t_cr_fe * ham
-    return ham
+    return t_cr_fe * ham
 
 
 def hamiltonian_cr_fe_2(kx, ky, kz, t_cr_fe):
@@ -216,8 +209,7 @@ def hamiltonian_cr_fe_2(kx, ky, kz, t_cr_fe):
     ham[2][0] = fourier(kx, ky, kz, primitive_vectors[0], ang2)
     ham[2][1] = fourier(kx, ky, kz, array([0, 0, 0]), ang1)
     ham[2][2] = fourier(kx, ky, kz, array([0, 0, 0]), ang3)
-    ham = -t_cr_fe * ham
-    return ham
+    return t_cr_fe * ham
 
 
 def hamiltonian_cr_fe_3(kx, ky, kz, t_cr_fe):
@@ -234,8 +226,7 @@ def hamiltonian_cr_fe_3(kx, ky, kz, t_cr_fe):
     ham[2][0] = fourier(kx, ky, kz, -primitive_vectors[1] + primitive_vectors[2], ang2)
     ham[2][1] = fourier(kx, ky, kz, primitive_vectors[2], ang1)
     ham[2][2] = fourier(kx, ky, kz, -primitive_vectors[1] + primitive_vectors[2], ang3)
-    ham = -t_cr_fe * ham
-    return ham
+    return t_cr_fe * ham
 
 
 def hamiltonian_cr_fe_4(kx, ky, kz, t_cr_fe):
@@ -252,8 +243,7 @@ def hamiltonian_cr_fe_4(kx, ky, kz, t_cr_fe):
     ham[2][0] = fourier(kx, ky, kz, -primitive_vectors[1], ang2)
     ham[2][1] = fourier(kx, ky, kz, array([0, 0, 0]), ang1)
     ham[2][2] = fourier(kx, ky, kz, -primitive_vectors[1], ang3)
-    ham = -t_cr_fe * ham
-    return ham
+    return t_cr_fe * ham
 
 
 def hamiltonian_cr_fe_5(kx, ky, kz, t_cr_fe_p):
@@ -270,8 +260,7 @@ def hamiltonian_cr_fe_5(kx, ky, kz, t_cr_fe_p):
     ham[2][0] = fourier(kx, ky, kz, primitive_vectors[0], ang4)
     ham[2][1] = fourier(kx, ky, kz, primitive_vectors[0], ang5)
     ham[2][2] = fourier(kx, ky, kz, -primitive_vectors[1], ang4)
-    ham = -t_cr_fe_p * ham
-    return ham
+    return t_cr_fe_p * ham
 
 
 def hamiltonian_cr_fe_6(kx, ky, kz, t_cr_fe_p):
@@ -288,8 +277,7 @@ def hamiltonian_cr_fe_6(kx, ky, kz, t_cr_fe_p):
     ham[2][0] = fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[2], ang4)
     ham[2][1] = fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[2], ang5)
     ham[2][2] = fourier(kx, ky, kz, -primitive_vectors[1] + primitive_vectors[2], ang4)
-    ham = -t_cr_fe_p * ham
-    return ham
+    return t_cr_fe_p * ham
 
 
 # Constructs the Cr-Fe sector
@@ -352,7 +340,7 @@ def crystal_field_splitting(split_cr, split_fe):
     u_2_cr = identity(5)
     cfs_cr = split_mat_cr
     split_mat_fe = off_diagonal(split_fe * (eigvals_fe - mean(eigvals_fe)), u_fe)
-    u_2_fe = array([[0, 1, 0, 0, 0], [1, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 1, 0, 
+    u_2_fe = array([[0, 1, 0, 0, 0], [1, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 1, 0,
   0], [0, 0, 0, 0, 1]])
     cfs_fe = dot(dot(adjoint(u_2_fe), split_mat_fe), u_2_fe)
     return [cfs_cr, cfs_fe]
@@ -409,18 +397,3 @@ def total_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, 
 def bvk_eigenvectors(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
     ham = total_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe)
     return eig(ham)[1]
-
-    
-''' to do list
-1) construct fe-cr subpieces (Done)
-2) construct fe-fe sector (Done)
-3) construct fe-cr sector (Done)
-4) add cr cfs (Done)
-5) add fe cfs (Done)
-6) construct full model with all 1s as hopping parameters (Done)
-7) define m() function (Done)
-8) define Sz mean field function (Done)
-9) write SCMFT algorithm
-10) get out hamiltonian notes to remember where things come from
-11) think about calculating jij
-'''
