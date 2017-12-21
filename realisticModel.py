@@ -64,12 +64,12 @@ def full_hamiltonian(ham):
 
 
 # The next 3 definitions construct subsectors of the Cr-Cr sector
-def hamiltonian_cr_cr_1(kx, ky, kz, tz):
+def hamiltonian_cr_cr_1(kx, ky, kz, t_a_cr):
     ham = zeros((3, 3), dtype='complex')
     ham[0][1] = fourier(kx, ky, kz, -(primitive_vectors[0] + primitive_vectors[1]), angle4)
     ham[0][2] = fourier(kx, ky, kz, -primitive_vectors[0], angle4)
     ham[1][2] = fourier(kx, ky, kz, primitive_vectors[1], angle4)
-    return tz * ham
+    return t_a_cr * ham
 
 
 def hamiltonian_cr_cr_2(kx, ky, kz, tperp, tzp, t2p):
@@ -313,7 +313,7 @@ def construct_u_total(mat_size, changes_array):
     return u_tot
 
 
-# This needs to be fixed! Make more functions here!
+# This needs to be fixed! Write more functions here!
 eigvals_cr =  list(map(float,array(read_data("/home/solidangle/pyramid/CFSResults/eigvalsCr.txt")).flatten()))
 eigvals_fe =  list(map(float,array(read_data("/home/solidangle/tetrahedron/CFSResults/eigvalsFe.txt")).flatten()))
 eigs_cr = array(read_data("/home/solidangle/pyramid/CFSResults/eigsCr.txt"))
@@ -356,44 +356,3 @@ def non_magnetic_hamiltonian(kx, ky, kz, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p
     sl1 = hstack([hamiltonian_cr_cr(kx, ky, kz, tz, tperp, txp, t2p) + full_cfs(cfs_cr), hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p)])
     sl2 = hstack([transpose(conj(hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p))), hamiltonian_fe_fe(kx, ky, kz, tz_fe, tz_fe_p, tperp_fe) + full_cfs(cfs_fe)])
     return vstack([sl1, sl2])
-
-
-# Defines Born Von-Karman point for a given system size
-def bvk(n1, n2, n3, d1, d2, d3):
-    b1 = reciprocal_vectors(0, 1, 2)
-    b2 = reciprocal_vectors(1, 2, 0)
-    b3 = reciprocal_vectors(2, 0, 1)
-    return b1 * float(n1) / d1 + b2 * float(n2) / d2 + b3 * float(n3) / d3
-
-
-# Constructs the non-magnetic Hamiltonian
-def non_magnetic_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
-    k_ptx, k_pty, k_ptz = bvk(n1, n2, n3, d1, d2, d3)
-    ham = kron(identity(2), non_magnetic_hamiltonian(k_ptx, k_pty, k_ptz, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe))
-    return ham
-
-
-# Constructs magnetic term of the Hamiltonian
-def magnetic_hamiltonian(mu_val, delta, j_h, sz_cr, sz_fe):
-    mu_cr = mu_val + delta
-    mu_fe = mu_val - delta
-    mat1 = diag([-mu_cr - j_h * sz_cr, -mu_fe - j_h * sz_fe, -mu_cr + j_h * sz_cr, -mu_fe + j_h * sz_fe])
-    ham = kron(mat1, identity(15))
-    return ham
-
-
-# Constructs the total Hamiltonian at a given k point
-def total_hamiltonian(kx, ky, kz, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    non_mag = kron(identity(2), non_magnetic_hamiltonian(kx, ky, kz, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe))
-    return non_mag + magnetic_hamiltonian(mu_val, delta, j_h, sz_cr, sz_fe)
-
-
-# Constructs the total Hamiltonian at a given BVK point
-def total_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    return non_magnetic_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe) + magnetic_hamiltonian(mu_val, delta, j_h, sz_cr, sz_fe)
-
-
-# Returns the matrix that diagonalizes the Hamiltonian
-def bvk_eigenvectors(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    ham = total_bvk_hamiltonian(n1, n2, n3, d1, d2, d3, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe)
-    return eig(ham)[1]
