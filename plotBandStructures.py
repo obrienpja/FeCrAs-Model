@@ -1,5 +1,8 @@
-from realisticModel import *
+from modelFunctions import *
+from hoppingSectors import *
+from crystalFieldSplitting import *
 
+# Defines origin and special k-points (which ones?)
 origin = array([0, 0, 0])
 point1 = .5*reciprocal_vectors(*(0,1,2))
 point2 = array([.25*norm(reciprocal_vectors(*(0,1,2))), .5*norm(reciprocal_vectors(*(0,1,2))), 0])
@@ -25,59 +28,26 @@ def k_path(t):
         return (t - 6) * (origin - point2) + point2 + pi/(2*c) * array([0, 0, 1])
 
 
-def non_magnetic_hamiltonian_plot():
-    pass
-    
-    
-# Defines the
-def hamiltonian_cr_cr_k_path(t, tz, tperp, tzp, t2p):
+# Constructs full non-magnetic Hamiltonian from Cr-Cr, Cr-Fe, Fe-Cr, and Fe-Fe sectors
+def non_magnetic_hamiltonian(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr, t_cr_fe, t_cr_fe_p, t_z_fe, t_out_fe, t_in_fe):
+    cfs_cr, cfs_fe = crystal_field_splitting(1000, 1000)
+    sl1 = hstack([hamiltonian_cr_cr(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr) + full_cfs(cfs_cr), hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p)])
+    sl2 = hstack([adjoint(hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p)), hamiltonian_fe_fe(kx, ky, kz, t_z_fe, t_out_fe, t_in_fe) + full_cfs(cfs_fe)])
+    return vstack([sl1, sl2])
+
+
+def non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
     kx, ky, kz = k_path(t)
-    return hamiltonian_cr_cr(kx, ky, kz, tz, tperp, tzp, t2p)
+    return non_magnetic_hamiltonian(kx, ky, kz, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
 
 
-def total_hamiltonian_k_path(t, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    kx, ky, kz = k_path(t)
-    return total_hamiltonian(kx, ky, kz, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe)
-
-
-def total_hamiltonian_eigenvalues(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    ham = total_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe)
+def non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
+    ham = non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
     return sorted(map(lambda x: round(x, 5), eigvals(ham)))
 
 
-def realistic_data(tz, tperp, tzp, t2p):
-    return array([hamiltonian_cr_cr_eigenvalues(t, tz, tperp, tzp, t2p) for t in arange(0, 3, 0.01)])
-
-
-# Plots the realistic model over the Gamma-M-K-Gamma-A-H-L-A (Check this)
-def realistic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe):
-    data = array([total_hamiltonian_eigenvalues(t, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, mu_val, delta, j_h, sz_cr, sz_fe) for t in arange(0, 3, 0.01)])
-    plt.gcf().canvas.set_window_title("Realistic Cr-Cr Band Structure Plot")
-    plt.title("Realistic Cr-Cr Band Structure Plot")
-    plt.xlabel("Kpoints")
-    plt.ylabel("Energy")
-    plt.axis([0, 300, -10, 10])
+def non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
+    data = array([non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe) for t in arange(0, 7, 0.02)])
+    # plt.gcf().canvas.set_window_title("Realistic Total Band Structure Plot")
     plt.plot(data)
-    plt.show()
-
-    
-# Convert data from Mathematica's complex form to Python's complex form
-def convert_data(data):
-    for i in range(len(data)):
-        for j in range(len(data)):
-            data[i][j] = complex(data[i][j].replace("*I", "j"))
-    return data
-
-#dat = array(convert_data(read_data('/home/solidangle/CrCrData.txt')))
-
-#for i in range(len(dat)):
-#    for j in range(len(dat)):
-#        if dat[i][j] != hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1)[i][j]:
-#            print i, j, dat[i][j], hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1)[i][j]
-
-#print len(dat), len(hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1))
-#print dat == hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1)
-
-#print hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1) == transpose(conj(hamiltonian_cr_cr(.5, .5, .5, 1, 1, 1, 1)))
-
-
+    # plt.show()
