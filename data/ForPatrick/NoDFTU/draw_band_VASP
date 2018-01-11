@@ -1,0 +1,32 @@
+# 14.11.2010 TB
+# Draw band structures from VASP EIGENVAL file. 
+# Writes two files: BANDS.RESULT which contain the band 
+# structure, and PLOT.gnu which enables one to plot it
+# in gnuplot. 
+#
+# Note that the number of bands should be set in the for loop.
+#
+
+grep -e 'E-fermi' OUTCAR |awk '{print $3}'>FERMI
+
+grep -e " 1     " EIGENVAL|cut -c6-5000>band1.tmp
+#echo set style linespoints>PLOT.gnu
+echo unset key >> PLOT.gnu
+echo -n plot "'BANDS.RESULT'" using 0:1 with dots>>PLOT.gnu
+###
+##
+# Should change the number of bands in the loop
+##
+###
+for i in {2..110} 
+do 
+ filename="band$i.tmp"
+ #echo $i>>temp.tmp
+ grep -e " $i     " EIGENVAL|cut -c6-5000>$filename
+ echo -n , "'BANDS.RESULT'" using 0:$i with dots>>PLOT.gnu
+done
+
+rm BANDS.RESULT
+paste band*.tmp >> BANDS.RESULT
+
+rm band*.tmp
