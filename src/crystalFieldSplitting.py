@@ -49,7 +49,7 @@ def off_diagonal(mat_test, uni):
 def crystal_field_splitting(split_cr, split_fe):
     split_mat_cr = off_diagonal(split_cr * (eigvals_cr - mean(eigvals_cr)), u_cr)
     u_2_cr = array([[0, 0, 0, 0, 1], [0, 0, 0, 1, 0], [0, 0, 1, 0, 0], [0, 1, 0, 0, 0], [1, 0, 0, 0, 0]])
-    cfs_cr = split_mat_cr
+    cfs_cr = dot(dot(adjoint(u_2_cr), split_mat_cr), u_2_cr)
     split_mat_fe = off_diagonal(split_fe * (eigvals_fe - mean(eigvals_fe)), u_fe)
     u_2_fe = array([[0, 1, 0, 0, 0], [1, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 1, 0, 0], [0, 0, 0, 0, 1]])
     cfs_fe = dot(dot(adjoint(u_2_fe), split_mat_fe), u_2_fe)

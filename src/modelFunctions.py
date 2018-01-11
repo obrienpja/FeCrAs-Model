@@ -9,10 +9,9 @@ import itertools
 i = complex(0, 1)
 
 # lattice parameters (in Angstroms)
+# primitive vectors
 a = 6.0675
 c = 3.6570
-
-# primitive vectors
 primitive_vectors = array([[a, 0, 0], [-(a/2), a*sqrt(3)/2, 0], [0, 0, c]])
 
 # Deflection angles, I found these angles by hand using VESTA

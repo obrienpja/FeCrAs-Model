@@ -51,3 +51,14 @@ def non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, t
     # plt.gcf().canvas.set_window_title("Realistic Total Band Structure Plot")
     plt.plot(data)
     # plt.show()
+
+def non_magnetic_plot2(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
+    fig = plt.figure()
+    plt.title("OOHM Band Structure for FeCrAs")
+    plt.xlabel("Kpoints")
+    plt.ylabel("Energy")
+    plt.axis([0, 350, -5, 8])
+    plt.xticks([0, 50, 100, 150, 200, 250, 300, 350],['G','M','K','G','A','L','H','A'])
+    fig.set_size_inches(15, 10, forward = True)
+    non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
+    plt.savefig("t-a-cr-6.pdf")
