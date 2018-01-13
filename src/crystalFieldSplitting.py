@@ -27,8 +27,8 @@ def construct_u_total(mat_size, changes_array):
 # This needs to be fixed! Write more functions here!
 eigvals_cr =  list(map(float,array(read_data("/home/solidangle/pyramid/CFSResults/eigvalsCr.txt")).flatten()))
 eigvals_fe =  list(map(float,array(read_data("/home/solidangle/tetrahedron/CFSResults/eigvalsFe.txt")).flatten()))
-eigs_cr = array(read_data("/home/solidangle/pyramid/CFSResults/eigsCr.txt"))
-eigs_fe = array(read_data("/home/solidangle/tetrahedron/CFSResults/eigsFe.txt"))
+eigs_cr = array(read_data("/home/solidangle/pyramid/CFSResults/cfs_eigenvectors_Cr_python.txt"))
+eigs_fe = array(read_data("/home/solidangle/tetrahedron/CFSResults/cfs_eigenvectors_Fe_python.txt"))
 eigenvectors_cr = [map(float, eigs_cr[i]) for i in range(5)]
 eigenvectors_fe = [map(float, eigs_fe[i]) for i in range(5)]
 changes_cr = read_data("/home/solidangle/pyramid/CFSResults/pyramid_changes_array.txt")

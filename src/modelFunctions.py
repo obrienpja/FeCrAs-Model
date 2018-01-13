@@ -25,7 +25,7 @@ ang1 = (pi/180) * (180 - 67.7109)
 ang2 = (pi/180) * (180 - 70.925)
 ang3 = (pi/180) * (180 - 134.9172)
 ang4 = (pi/180) * (180 - 71.452)
-ang5 = (pi/180) * (180 - 138.6132)
+ang5 = (pi/180) * (180 - 129.5089)
 
 
 # define reciprocal lattice vectors from the primitive vectors

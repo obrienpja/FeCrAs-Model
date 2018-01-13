@@ -3,8 +3,8 @@ from modelFunctions import *
 # The next 3 definitions construct subsectors of the Cr-Cr sector
 def hamiltonian_cr_cr_1(kx, ky, kz, t_a_cr):
     ham = zeros((3, 3), dtype='complex')
-    ham[0][1] = fourier(kx, ky, kz, (primitive_vectors[0] - primitive_vectors[1]), angle4)
-    ham[0][2] = fourier(kx, ky, kz, primitive_vectors[0], angle4)
+    ham[0][1] = fourier(kx, ky, kz, (-primitive_vectors[0] - primitive_vectors[1]), angle4)
+    ham[0][2] = fourier(kx, ky, kz, -primitive_vectors[0], angle4)
     ham[1][2] = fourier(kx, ky, kz, primitive_vectors[1], angle4)
     return t_a_cr * ham
 
@@ -12,20 +12,20 @@ def hamiltonian_cr_cr_1(kx, ky, kz, t_a_cr):
 def hamiltonian_cr_cr_2(kx, ky, kz, t_in_cr, t_z_cr, t_out_cr):
     ham = zeros((6, 6), dtype='complex')
     # first row
-    ham[0][1], ham[0][2] = (t_in_cr * fourier(kx, ky, kz, -primitive_vectors[1], angle2),) * 2
-    ham[0][3] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
-    ham[0][4], ham[0][5] = (t_out_cr * fourier(kx, ky, kz, -(primitive_vectors[1] + primitive_vectors[2]), angle3),) * 2
+    ham[0][1], ham[0][2] = (t_in_cr * cos(angle2),) * 2
+    ham[0][3] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
+    ham[0][4], ham[0][5] = (t_out_cr * fourier(kx, ky, kz, primitive_vectors[2], angle3),) * 2
     # second row
     ham[1][2] = t_in_cr * cos(angle2)
-    ham[1][3]  = t_out_cr * fourier(kx, ky, kz, primitive_vectors[1] - primitive_vectors[2], angle3)
-    ham[1][4] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
-    ham[1][5] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle3)
+    ham[1][3]  = t_out_cr * fourier(kx, ky, kz, primitive_vectors[2], angle3)
+    ham[1][4] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
+    ham[1][5] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[2], angle3)
     # third row
-    ham[2][3] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[1] - primitive_vectors[2], angle3)
-    ham[2][4] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle3)
-    ham[2][5] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
+    ham[2][3] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[2], angle3)
+    ham[2][4] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[2], angle3)
+    ham[2][5] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
     # fourth row
-    ham[3][4], ham[3][5] = (t_in_cr * fourier(kx, ky, kz, -primitive_vectors[1], angle2),) * 2
+    ham[3][4], ham[3][5] = (t_in_cr * cos(angle2),) * 2
     # fifth row
     ham[4][5] = t_in_cr * cos(angle2)
     # tack a minus sign on so the hopping processes lower energy
@@ -35,25 +35,25 @@ def hamiltonian_cr_cr_2(kx, ky, kz, t_in_cr, t_z_cr, t_out_cr):
 def hamiltonian_cr_cr_3(kx, ky, kz, t_in_cr, t_z_cr, t_out_cr):
     ham = zeros((6, 6), dtype='complex')
     # first row
-    ham[0][1] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[0], angle2)
-    ham[0][2] = t_in_cr * cos(angle2)
-    ham[0][3] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
-    ham[0][4] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[0] - primitive_vectors[2], angle3)
-    ham[0][5] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle3)
+    ham[0][1] = t_in_cr * fourier(kx, ky, kz, -primitive_vectors[0], angle2)
+    ham[0][2] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[1], angle2)
+    ham[0][3] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
+    ham[0][4] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[0] + primitive_vectors[2], angle3)
+    ham[0][5] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[1] + primitive_vectors[2], angle3)
     # second row
-    ham[1][2] = t_in_cr * fourier(kx, ky, kz, -primitive_vectors[0], angle2)
-    ham[1][3] = t_out_cr * fourier(kx, ky, kz, -(primitive_vectors[0] + primitive_vectors[2]), angle3)
-    ham[1][4] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
-    ham[1][5] = t_out_cr * fourier(kx, ky, kz, -(primitive_vectors[0] + primitive_vectors[2]), angle3)
+    ham[1][2] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[1], angle2)
+    ham[1][3] = t_out_cr * fourier(kx, ky, kz, (primitive_vectors[0] + primitive_vectors[2]), angle3)
+    ham[1][4] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
+    ham[1][5] = t_out_cr * fourier(kx, ky, kz, (primitive_vectors[0] + primitive_vectors[1] + primitive_vectors[2]), angle3)
     # third row
-    ham[2][3] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle3)
-    ham[2][4] = t_out_cr * fourier(kx, ky, kz, primitive_vectors[0] - primitive_vectors[2], angle3)
-    ham[2][5] = t_z_cr * fourier(kx, ky, kz, -primitive_vectors[2], angle1)
+    ham[2][3] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[1] + primitive_vectors[2], angle3)
+    ham[2][4] = t_out_cr * fourier(kx, ky, kz, -primitive_vectors[0] - primitive_vectors[1] + primitive_vectors[2], angle3)
+    ham[2][5] = t_z_cr * fourier(kx, ky, kz, primitive_vectors[2], angle1)
     # fourth row
-    ham[3][4] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[0], angle2)
-    ham[3][5] = t_in_cr * cos(angle2)
+    ham[3][4] = t_in_cr * fourier(kx, ky, kz, -primitive_vectors[0], angle2)
+    ham[3][5] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[1], angle2)
     # fifth row
-    ham[4][5] = t_in_cr * fourier(kx, ky, kz, -primitive_vectors[0], angle2)
+    ham[4][5] = t_in_cr * fourier(kx, ky, kz, primitive_vectors[0] + primitive_vectors[1], angle2)
     # tack a minus sign on so the hopping processes lower energy
     return ham
 
@@ -63,9 +63,9 @@ def hamiltonian_cr_cr(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr):
     ham1 = full_hamiltonian(hamiltonian_cr_cr_1(kx, ky, kz, t_a_cr))
     ham2 = full_hamiltonian(hamiltonian_cr_cr_2(kx, ky, kz, t_in_cr, t_z_cr, t_out_cr))
     ham3 = full_hamiltonian(hamiltonian_cr_cr_3(kx, ky, kz, t_in_cr, t_z_cr, t_out_cr))
-    slice1 = hstack([zeros((6, 3), dtype='complex'), ham2, zeros((6, 6), dtype='complex')])
-    slice2 = hstack([zeros((6, 3), dtype='complex'), zeros((6, 6), dtype='complex'), ham3])
-    slice3 = hstack([ham1, zeros((3, 6), dtype='complex'), zeros((3, 6), dtype='complex')])
+    slice1 = hstack([ham2, zeros((6, 3), dtype='complex'), zeros((6, 6), dtype='complex')])
+    slice2 = hstack([zeros((6, 6), dtype='complex'), ham3, zeros((6, 3), dtype='complex')])
+    slice3 = hstack([zeros((3, 6), dtype='complex'), zeros((3, 6), dtype='complex'), ham1])
     return vstack([slice1, slice2, slice3])
 
 
@@ -107,8 +107,8 @@ def hamiltonian_fe_fe_3(kx, ky, kz, t_in_fe):
 def hamiltonian_fe_fe(kx, ky, kz, t_z_fe, t_out_fe, t_in_fe):
     sl1 = hstack([zeros((3, 3), dtype='complex'), hamiltonian_fe_fe_1(kx, ky, kz, t_z_fe, t_out_fe), zeros((3, 9), dtype='complex')])
     sl2 = hstack([adjoint(hamiltonian_fe_fe_1(kx, ky, kz, t_z_fe, t_out_fe)), zeros((3, 12), dtype='complex')])
-    sl3 = hstack([zeros((3, 6), dtype='complex'), hamiltonian_fe_fe_2(kx, ky, kz, t_in_fe), zeros((3, 6), dtype='complex')])
-    sl4 = hstack([zeros((3, 9), dtype='complex'), hamiltonian_fe_fe_3(kx, ky, kz, t_in_fe), zeros((3, 3), dtype='complex')])
+    sl3 = hstack([zeros((3, 6), dtype='complex'), full_hamiltonian(hamiltonian_fe_fe_2(kx, ky, kz, t_in_fe)), zeros((3, 6), dtype='complex')])
+    sl4 = hstack([zeros((3, 9), dtype='complex'), full_hamiltonian(hamiltonian_fe_fe_3(kx, ky, kz, t_in_fe)), zeros((3, 3), dtype='complex')])
     sl5 = zeros((3, 15) , dtype='complex')
     ham = vstack([sl1, sl2, sl3, sl4, sl5])
     return ham

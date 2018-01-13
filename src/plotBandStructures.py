@@ -29,30 +29,30 @@ def k_path(t):
 
 
 # Constructs full non-magnetic Hamiltonian from Cr-Cr, Cr-Fe, Fe-Cr, and Fe-Fe sectors
-def non_magnetic_hamiltonian(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr, t_cr_fe, t_cr_fe_p, t_z_fe, t_out_fe, t_in_fe):
-    cfs_cr, cfs_fe = crystal_field_splitting(1000, 1000)
+def non_magnetic_hamiltonian(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr, t_cr_fe, t_cr_fe_p, t_z_fe, t_out_fe, t_in_fe, cr, fe):
+    cfs_cr, cfs_fe = crystal_field_splitting(cr, fe)
     sl1 = hstack([hamiltonian_cr_cr(kx, ky, kz, t_a_cr, t_in_cr, t_z_cr, t_out_cr) + full_cfs(cfs_cr), hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p)])
     sl2 = hstack([adjoint(hamiltonian_cr_fe(kx, ky, kz, t_cr_fe, t_cr_fe_p)), hamiltonian_fe_fe(kx, ky, kz, t_z_fe, t_out_fe, t_in_fe) + full_cfs(cfs_fe)])
     return vstack([sl1, sl2])
 
 
-def non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
+def non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe):
     kx, ky, kz = k_path(t)
-    return non_magnetic_hamiltonian(kx, ky, kz, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
+    return non_magnetic_hamiltonian(kx, ky, kz, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe)
 
 
-def non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
-    ham = non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
+def non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe):
+    ham = non_magnetic_hamiltonian_k_path(t, tz, tperp, tzp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe)
     return sorted(map(lambda x: round(x, 5), eigvals(ham)))
 
 
-def non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
-    data = array([non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe) for t in arange(0, 7, 0.02)])
+def non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe):
+    data = array([non_magnetic_hamiltonian_eigenvalues(t, tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, cr, fe) for t in arange(0, 7, 0.02)])
     # plt.gcf().canvas.set_window_title("Realistic Total Band Structure Plot")
     plt.plot(data)
     # plt.show()
 
-def non_magnetic_plot2(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe):
+def non_magnetic_plot2(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, filename):
     fig = plt.figure()
     plt.title("OOHM Band Structure for FeCrAs")
     plt.xlabel("Kpoints")
@@ -60,5 +60,5 @@ def non_magnetic_plot2(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, 
     plt.axis([0, 350, -5, 8])
     plt.xticks([0, 50, 100, 150, 200, 250, 300, 350],['G','M','K','G','A','L','H','A'])
     fig.set_size_inches(15, 10, forward = True)
-    non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe)
-    plt.savefig("t-a-cr-6.pdf")
+    non_magnetic_plot(tz, tperp, txp, t2p, t_cr_fe, t_cr_fe_p, tz_fe, tz_fe_p, tperp_fe, 1000, 1000)
+    plt.savefig(filename)
